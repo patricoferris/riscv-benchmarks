@@ -22,13 +22,13 @@ let build () =
   let _ = Sys.command ("ocamlopt -c " ^ helper_files) in
   let _ = Sys.command ("ocamlopt -c " ^ benchmark_files) in
   let helper_cmxs = List.fold_left (fun acc -> fun s -> acc ^ " " ^ s) "" (change_filetype ".cmx" helpers) in
-    List.map (fun b -> Sys.command ("ocamlopt -o " ^ (List.hd (String.split_on_char '.' b)) ^ helper_cmxs ^ " " ^ b)) (change_filetype ".cmx" benchmarks)
+    List.map (fun b -> Sys.command ("ocamlopt -o " ^ ((List.hd (String.split_on_char '.' b)) ^ ".out") ^ helper_cmxs ^ " " ^ b)) (change_filetype ".cmx" benchmarks)
 
 let clean () =
-  Sys.command ("rm *.cmi *.cmx *.cmo *.o" ^ (List.fold_left (fun acc -> fun s -> acc ^ " " ^ s) "" (change_filetype "" benchmarks)))
+  Sys.command ("rm *.cmi *.cmx *.cmo *.o *.out" ^ (List.fold_left (fun acc -> fun s -> acc ^ " " ^ s) "" (change_filetype "" benchmarks)))
 
 let run () = 
-  let executables = change_filetype "" benchmarks in
+  let executables = change_filetype ".out" benchmarks in
   List.iter (fun exec -> print_endline ("Running " ^ exec ^ " - code: " ^ (string_of_int (Sys.command  ("./" ^ exec))))) executables
 
 let () = 
