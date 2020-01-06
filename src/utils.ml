@@ -32,6 +32,6 @@ let gen_random_float_list size a b =
     aux [] a b size 
 
 let gen_random_array size a b f =
-  Array.map (fun x -> f a b) (Array.make size 0)
+  Array.map (fun _ -> f a b) (Array.make size 0)
 
  
