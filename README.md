@@ -22,6 +22,7 @@ Below is the output of `dune exec -- ./bench.exe -help`
 === flags ===
 
   [-args <argument-list>]  arguments to pass in
+  [-asm]                   produces .s assembly files during the building phase
   [-c <compiler>]          ocamlopt to use
   [-v]                     printing build commands etc.
   [-build-info]            print info about this build and exit

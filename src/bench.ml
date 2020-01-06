@@ -19,11 +19,12 @@ let change_filetype filetype files =
 let stringify xs = List.fold_left (fun acc -> fun s -> acc ^ " " ^ s) "" xs  
 
 (* Builds the helpers and benchmarks as cmxs then links - optitional compiler and arguments *)
-let build ?compiler:(compiler="ocamlopt") ?args:(args="") ?verbose:(verbose=false) () =
+let build ?compiler:(compiler="ocamlopt") ?args:(args="") ?verbose:(verbose=false) ?asm:(asm=false) () =
+  let asm = if asm then " -S" else "" in
   let helper_files = stringify helpers in
   let benchmark_files = stringify benchmarks in
-  let helper_comp = (compiler ^ " -c " ^ helper_files) in 
-  let benchmark_comp = (compiler ^ " -c " ^ benchmark_files) in 
+  let helper_comp = (compiler ^ asm ^ " -c " ^ helper_files) in 
+  let benchmark_comp = (compiler ^ asm ^ " -c " ^ benchmark_files) in 
     if verbose then (print_endline helper_comp; ignore (Sys.command helper_comp); print_endline benchmark_comp; ignore (Sys.command benchmark_comp))
     else ignore (Sys.command helper_comp); ignore (Sys.command benchmark_comp);
   let helper_cmxs = stringify (change_filetype ".cmx" helpers) in
@@ -34,7 +35,7 @@ let build ?compiler:(compiler="ocamlopt") ?args:(args="") ?verbose:(verbose=fals
       ) (change_filetype ".cmx" benchmarks)
 
 let clean ?verbose:(verbose=false) () =
-  let command = "rm *.cmi *.cmx *.o *.out" in 
+  let command = "rm *.cmi *.cmx *.o *.out *.s" in 
   if verbose then (print_endline command; ignore (Sys.command command)) else ignore (Sys.command command)
 
 let run () = 
@@ -51,16 +52,17 @@ let command =
         and compiler = flag "-c" (optional string) ~doc:"<compiler> ocamlopt to use"
         and args     = flag "-args" (optional string) ~doc:"<argument-list> arguments to pass in"
         and verbose  = flag "-v" no_arg ~doc:" printing build commands etc."
+        and asm      = flag "-asm" no_arg ~doc:" produces .s assembly files during the building phase"
       in
         fun () -> 
           match mode with 
             | Some "clean"  -> clean ~verbose () 
             | Some "build"  -> 
               begin match (compiler, args) with 
-                | (None, None) -> build ~verbose ()
-                | (None, Some args) -> build ~args ~verbose ()
-                | (Some compiler, None) -> build ~compiler ~verbose ()
-                | (Some compiler, Some args) -> build ~compiler ~args ~verbose () end
+                | (None, None) -> build ~verbose ~asm ()
+                | (None, Some args) -> build ~args ~verbose ~asm ()
+                | (Some compiler, None) -> build ~compiler ~verbose ~asm ()
+                | (Some compiler, Some args) -> build ~compiler ~args ~verbose ~asm () end
             | None | Some _ -> print_endline "Please provide either build or clean as mode"
     )
 
