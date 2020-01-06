@@ -2,7 +2,7 @@ let helpers =
   ["utils.ml"]
 
 let benchmarks = 
-  ["intfloatarray.ml"; "sorting.ml"]
+  ["intfloatarray.ml"; "sorting.ml"; "someornone.ml"]
 
 (* Converting list of files *)
 let change_filetype filetype files =
