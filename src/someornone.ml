@@ -15,7 +15,6 @@ let random_some_none_list size =
 
 let benchmark () =
   let big_list = random_some_none_list size in 
-  let _ = Utils.map (fun x -> is_none x) big_list in
-    print_endline ("Someornone Benchmark Completed")
+  ignore (Utils.map (fun x -> is_none x) big_list)
 
 let () = benchmark ()

@@ -46,22 +46,22 @@ let mixed_types () =
   let array_one = Utils.gen_random_array size 0 100 (random_between) in 
   let array_two = Utils.gen_random_array size 0 100 (random_between) in 
   let gt = Array.map2 gt2 array_one array_two in 
-    Array.iter (fun n -> print_number n; print_string " ") gt
+    gt
 
 let int_list () =
   let random_int_list_one = Utils.gen_random_int_list size 0 100 in 
   let random_int_list_two = Utils.gen_random_int_list size 0 100 in 
   let gt_list = Utils.map2 greater_than random_int_list_one random_int_list_two in 
-    List.iter (fun n -> print_int n; print_string " ") gt_list
+    gt_list
 
 let float_list () =
   let random_float_list_one = Utils.gen_random_float_list size 0. 100. in 
   let random_float_list_two = Utils.gen_random_float_list size 0. 100. in 
   let gt_list = Utils.map2 greater_than random_float_list_one random_float_list_two in 
-    List.iter (fun f -> print_float f; print_string " ") gt_list
+    gt_list
 
 (* BENCHMARK DRIVER *)
 let benchmark () = 
-  int_list () ; float_list () ; mixed_types ()
+  ignore (int_list ()) ; ignore (float_list ()) ; ignore (mixed_types ())
 
 let () = benchmark ()

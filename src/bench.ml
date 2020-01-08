@@ -4,6 +4,15 @@ let helpers =
 let benchmarks = 
   ["intfloatarray.ml"; "sorting.ml"; "someornone.ml"]
 
+(* Printing *)
+let expand str = 
+  if (String.length str) mod 2 = 0 then str else str ^ "="
+
+let surround str total_length = 
+  let padd = total_length - (String.length str) in 
+  let half = (String.make (padd / 2) '=')in
+    half ^ str ^ half
+
 (* Converting list of files *)
 let change_filetype filetype files =
   let change_end str ft = 
@@ -40,11 +49,18 @@ let clean ?verbose:(verbose=false) () =
 
 let run () = 
   let executables = change_filetype ".out" benchmarks in
-  List.iter (fun exec -> print_endline ("Running " ^ exec ^ " - code: " ^ (string_of_int (Sys.command  ("./" ^ exec))))) executables
+  List.iter 
+    (fun exec -> 
+      let head = expand exec in 
+      let header = surround head 50 in 
+        print_endline header; 
+        ignore (Sys.command  ("./" ^ exec)); 
+        print_endline (String.make 50 '=')
+    ) executables
 
 let spike () = 
   let executables = change_filetype ".out" benchmarks in
-  List.iter (fun exec -> print_endline ("Running " ^ exec ^ " - code: " ^ (string_of_int (Sys.command  ("spike $pk -s ./" ^ exec))))) executables
+  List.iter (fun exec -> print_endline ("==========" ^ exec ^ "=========="); ignore (Sys.command  ("spike $pk -s ./" ^ exec)); print_endline ("=====================")) executables
 
 (*********** COMMAND LINE TOOL ***********)
 let command = 
