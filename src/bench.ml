@@ -47,20 +47,20 @@ let clean ?verbose:(verbose=false) () =
   let command = "rm *.cmi *.cmx *.o *.out *.s" in 
   if verbose then (print_endline command; ignore (Sys.command command)) else ignore (Sys.command command)
 
+let print_and_execute exec prefix =
+  let head = expand exec in 
+  let header = surround head 50 in 
+    print_endline header; 
+    ignore (Sys.command  ("./" ^ exec)); 
+    print_endline (String.make 50 '=')
+
 let run () = 
   let executables = change_filetype ".out" benchmarks in
-  List.iter 
-    (fun exec -> 
-      let head = expand exec in 
-      let header = surround head 50 in 
-        print_endline header; 
-        ignore (Sys.command  ("./" ^ exec)); 
-        print_endline (String.make 50 '=')
-    ) executables
+  List.iter (fun exec -> print_and_execute exec "./") executables
 
-let spike () = 
+let spike ?args:(args="") () = 
   let executables = change_filetype ".out" benchmarks in
-  List.iter (fun exec -> print_endline ("==========" ^ exec ^ "=========="); ignore (Sys.command  ("spike $pk -s ./" ^ exec)); print_endline ("=====================")) executables
+  List.iter (fun exec -> print_and_execute exec ("spike $pk " ^ args ^ " ./")) executables
 
 (*********** COMMAND LINE TOOL ***********)
 let command = 
@@ -72,13 +72,17 @@ let command =
         and compiler = flag "-c" (optional string) ~doc:"<compiler> ocamlopt to use"
         and args     = flag "-args" (optional string) ~doc:"<argument-list> arguments to pass in"
         and verbose  = flag "-v" no_arg ~doc:" printing build commands etc."
+        and spikearg = flag "-spike" (optional string) ~doc:"<argument-list> spike arguments"
         and asm      = flag "-asm" no_arg ~doc:" produces .s assembly files during the building phase"
       in
         fun () -> 
           match mode with 
             | Some "clean" -> clean ~verbose () 
             | Some "run"   -> run ()
-            | Some "spike" -> spike ()
+            | Some "spike" ->
+              begin match spikearg with 
+                | None     -> spike ()
+                | Some args -> spike ~args () end 
             | Some "build" -> 
               begin match (compiler, args) with 
                 | (None, None) -> build ~verbose ~asm ()
