@@ -1,4 +1,4 @@
-let size = (1024 * 1024)
+let size = 8192
 
 let is_none = function 
   | None   -> true
