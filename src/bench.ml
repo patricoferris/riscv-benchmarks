@@ -51,7 +51,7 @@ let print_and_execute exec prefix =
   let head = expand exec in 
   let header = surround head 50 in 
     print_endline header; 
-    ignore (Sys.command  ("./" ^ exec)); 
+    ignore (Sys.command  (prefix ^ exec)); 
     print_endline (String.make 50 '=')
 
 let run () = 
