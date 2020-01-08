@@ -42,6 +42,10 @@ let run () =
   let executables = change_filetype ".out" benchmarks in
   List.iter (fun exec -> print_endline ("Running " ^ exec ^ " - code: " ^ (string_of_int (Sys.command  ("./" ^ exec))))) executables
 
+let spike () = 
+  let executables = change_filetype ".out" benchmarks in
+  List.iter (fun exec -> print_endline ("Running " ^ exec ^ " - code: " ^ (string_of_int (Sys.command  ("spike $pk -s ./" ^ exec))))) executables
+
 (*********** COMMAND LINE TOOL ***********)
 let command = 
   Core.Command.basic 
@@ -56,14 +60,16 @@ let command =
       in
         fun () -> 
           match mode with 
-            | Some "clean"  -> clean ~verbose () 
-            | Some "build"  -> 
+            | Some "clean" -> clean ~verbose () 
+            | Some "run"   -> run ()
+            | Some "spike" -> spike ()
+            | Some "build" -> 
               begin match (compiler, args) with 
                 | (None, None) -> build ~verbose ~asm ()
                 | (None, Some args) -> build ~args ~verbose ~asm ()
                 | (Some compiler, None) -> build ~compiler ~verbose ~asm ()
                 | (Some compiler, Some args) -> build ~compiler ~args ~verbose ~asm () end
-            | None | Some _ -> print_endline "Please provide either build or clean as mode"
+            | None | Some _ -> print_endline "Please provide either build, run, spike or clean as mode"
     )
 
 let () = Core.Command.run command 
