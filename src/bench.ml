@@ -43,7 +43,7 @@ let change_filetype filetype files =
 let stringify xs = List.fold_left (fun acc -> fun s -> acc ^ " " ^ s) "" xs  
 
 (* Builds the helpers and benchmarks as cmxs then links - optitional compiler and arguments *)
-let build ?compiler:(compiler="ocamlopt") ?args:(args="") ?verbose:(verbose=false) ?asm:(asm=false) ?outputc:(outputc=false) () =
+let build ?compiler:(compiler="ocamlopt") ?args:(args="") ?verbose:(verbose=false) ?asm:(asm=false) ?outputc:(outputc=false) ?output:(output="results.txt") () =
   let asm = if asm then " -S" else "" in
   let helper_files = stringify helpers in
   let benchmark_files = stringify benchmarks in
@@ -56,7 +56,7 @@ let build ?compiler:(compiler="ocamlopt") ?args:(args="") ?verbose:(verbose=fals
       (fun b -> 
         let command = (compiler ^ " " ^ args ^ " -o " ^ ((List.hd (String.split_on_char '.' b)) ^ ".out") ^ helper_cmxs ^ " " ^ b) in 
         if verbose then (print_endline command; ignore (Sys.command command)) else ignore (Sys.command command)
-      ) (change_filetype ".cmx" benchmarks); if outputc then echo (print_header compiler) "results.txt"
+      ) (change_filetype ".cmx" benchmarks); if outputc then echo (print_header compiler) output
 
 let clean ?verbose:(verbose=false) () =
   let command = "rm *.cmi *.cmx *.o *.out *.s *.txt" in 
@@ -66,12 +66,12 @@ let run () =
   let executables = change_filetype ".out" benchmarks in
   List.iter (fun exec -> print_and_execute exec "./") executables
 
-let spike ?args:(args="") () = 
+let spike ?args:(args="") ?output:(output="results.txt") () = 
   let executables = change_filetype ".out" benchmarks in
   let spike_instructions = List.map (fun exec -> "spike $pk " ^ args ^ " ./" ^ exec) executables in 
     List.iter2 
       (fun exec -> fun sp -> 
-        let cmd = ("echo \'" ^ print_header exec ^ "\' >> results.txt && " ^ sp ^ " >> results.txt && echo '\n'" ) in 
+        let cmd = ("echo \'" ^ print_header exec ^ "\' >> " ^ output ^ " && " ^ sp ^ " >> " ^ output ^ " && echo '\n'" ) in 
         print_endline cmd;
         ignore (Sys.command cmd)
       ) executables spike_instructions
@@ -88,19 +88,22 @@ let command =
         and verbose  = flag "-v" no_arg ~doc:" printing build commands etc."
         and spikearg = flag "-spike" (optional string) ~doc:"<argument-list> spike arguments"
         and asm      = flag "-asm" no_arg ~doc:" produces .s assembly files during the building phase"
+        and output   = flag "-o" (optional string) ~doc:"filename where the results should be stored"
       in
         fun () -> 
           match mode with 
             | Some "clean" -> clean ~verbose () 
             | Some "run"   -> run ()
             | Some "spike" ->
-              begin match spikearg with 
-                | None     -> spike ()
-                | Some args -> spike ~args () end
+              begin match (spikearg, output) with 
+                | (None, None)        -> spike ()
+                | (None, Some output) -> spike ~output ()
+                | (Some args, None)   -> spike ~args () 
+                | (Some args, Some output) -> spike ~args ~output () end
             | Some "spike-build" -> 
-              begin match compiler with 
-                | Some compiler -> build ~compiler ~args:"-ccopt -static" ~verbose:true ~asm:true ~outputc:true ()
-                | None -> build ~args:"-ccopt -static" ~verbose:true ~asm:true () end
+              begin match (compiler, output) with 
+                | (Some compiler, Some output) -> build ~compiler ~args:"-ccopt -static" ~verbose:true ~asm:true ~outputc:true ~output ()
+                | (_, _) -> build ~args:"-ccopt -static" ~verbose:true ~asm:true () end
             | Some "build" -> 
               begin match (compiler, args) with 
                 | (None, None) -> build ~verbose ~asm ()
