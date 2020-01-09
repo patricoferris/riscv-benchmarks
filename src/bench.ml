@@ -82,14 +82,18 @@ let command =
             | Some "spike" ->
               begin match spikearg with 
                 | None     -> spike ()
-                | Some args -> spike ~args () end 
+                | Some args -> spike ~args () end
+            | Some "spike-build" -> 
+              begin match compiler with 
+                | Some compiler -> build ~compiler ~args:"-ccopt -static" ~verbose:true ~asm:true ()
+                | None -> build ~args:"-ccopt -static" ~verbose:true ~asm:true () end
             | Some "build" -> 
               begin match (compiler, args) with 
                 | (None, None) -> build ~verbose ~asm ()
                 | (None, Some args) -> build ~args ~verbose ~asm ()
                 | (Some compiler, None) -> build ~compiler ~verbose ~asm ()
                 | (Some compiler, Some args) -> build ~compiler ~args ~verbose ~asm () end
-            | None | Some _ -> print_endline "Please provide either build, run, spike or clean as mode"
+            | None | Some _ -> print_endline "Please provide either build, spike-build, run, spike or clean as mode"
     )
 
 let () = Core.Command.run command 
