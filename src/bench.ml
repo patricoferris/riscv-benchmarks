@@ -5,6 +5,9 @@ let benchmarks =
   ["intfloatarray.ml"; "sorting.ml"; "someornone.ml"]
 
 (* Printing *)
+let echo str file =
+  ignore (Sys.command ("echo \'" ^ str ^ "\' >> " ^ file))
+
 let expand str = 
   if (String.length str) mod 2 = 0 then str else str ^ "="
 
@@ -12,6 +15,18 @@ let surround str total_length =
   let padd = total_length - (String.length str) in 
   let half = (String.make (padd / 2) '=')in
     half ^ str ^ half
+
+let print_and_execute exec prefix =
+  let head = expand exec in 
+  let header = surround head 50 in 
+    print_endline header; 
+    ignore (Sys.command  (prefix ^ exec)); 
+    print_endline (String.make 50 '=')
+
+let print_header exec = 
+    let head = expand exec in 
+    let header = surround head 50 in 
+      header
 
 (* Converting list of files *)
 let change_filetype filetype files =
@@ -28,7 +43,7 @@ let change_filetype filetype files =
 let stringify xs = List.fold_left (fun acc -> fun s -> acc ^ " " ^ s) "" xs  
 
 (* Builds the helpers and benchmarks as cmxs then links - optitional compiler and arguments *)
-let build ?compiler:(compiler="ocamlopt") ?args:(args="") ?verbose:(verbose=false) ?asm:(asm=false) () =
+let build ?compiler:(compiler="ocamlopt") ?args:(args="") ?verbose:(verbose=false) ?asm:(asm=false) ?outputc:(outputc=false) () =
   let asm = if asm then " -S" else "" in
   let helper_files = stringify helpers in
   let benchmark_files = stringify benchmarks in
@@ -41,23 +56,11 @@ let build ?compiler:(compiler="ocamlopt") ?args:(args="") ?verbose:(verbose=fals
       (fun b -> 
         let command = (compiler ^ " " ^ args ^ " -o " ^ ((List.hd (String.split_on_char '.' b)) ^ ".out") ^ helper_cmxs ^ " " ^ b) in 
         if verbose then (print_endline command; ignore (Sys.command command)) else ignore (Sys.command command)
-      ) (change_filetype ".cmx" benchmarks)
+      ) (change_filetype ".cmx" benchmarks); if outputc then echo (print_header compiler) "results.txt"
 
 let clean ?verbose:(verbose=false) () =
   let command = "rm *.cmi *.cmx *.o *.out *.s *.txt" in 
   if verbose then (print_endline command; ignore (Sys.command command)) else ignore (Sys.command command)
-
-let print_and_execute exec prefix =
-  let head = expand exec in 
-  let header = surround head 50 in 
-    print_endline header; 
-    ignore (Sys.command  (prefix ^ exec)); 
-    print_endline (String.make 50 '=')
-
-let print_header exec = 
-    let head = expand exec in 
-    let header = surround head 50 in 
-      header
 
 let run () = 
   let executables = change_filetype ".out" benchmarks in
@@ -96,7 +99,7 @@ let command =
                 | Some args -> spike ~args () end
             | Some "spike-build" -> 
               begin match compiler with 
-                | Some compiler -> build ~compiler ~args:"-ccopt -static" ~verbose:true ~asm:true ()
+                | Some compiler -> build ~compiler ~args:"-ccopt -static" ~verbose:true ~asm:true ~outputc:true ()
                 | None -> build ~args:"-ccopt -static" ~verbose:true ~asm:true () end
             | Some "build" -> 
               begin match (compiler, args) with 
