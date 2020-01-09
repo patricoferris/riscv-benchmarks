@@ -44,7 +44,7 @@ let build ?compiler:(compiler="ocamlopt") ?args:(args="") ?verbose:(verbose=fals
       ) (change_filetype ".cmx" benchmarks)
 
 let clean ?verbose:(verbose=false) () =
-  let command = "rm *.cmi *.cmx *.o *.out *.s" in 
+  let command = "rm *.cmi *.cmx *.o *.out *.s *.txt" in 
   if verbose then (print_endline command; ignore (Sys.command command)) else ignore (Sys.command command)
 
 let print_and_execute exec prefix =
@@ -54,13 +54,24 @@ let print_and_execute exec prefix =
     ignore (Sys.command  (prefix ^ exec)); 
     print_endline (String.make 50 '=')
 
+let print_header exec = 
+    let head = expand exec in 
+    let header = surround head 50 in 
+      print_endline header
+
 let run () = 
   let executables = change_filetype ".out" benchmarks in
   List.iter (fun exec -> print_and_execute exec "./") executables
 
 let spike ?args:(args="") () = 
   let executables = change_filetype ".out" benchmarks in
-  List.iter (fun exec -> print_and_execute exec ("spike $pk " ^ args ^ " ./")) executables
+  let spike_instructions = List.map (fun exec -> "spike $pk " ^ args ^ " ./" ^ exec) executables in 
+    List.iter2 
+      (fun exec -> fun sp -> 
+        let cmd = ("echo \'Running: " ^ exec ^ "\n\' >> results.txt && " ^ sp ^ " >> results.txt") in 
+        print_endline cmd;
+        ignore (Sys.command cmd)
+      ) executables spike_instructions
 
 (*********** COMMAND LINE TOOL ***********)
 let command = 
