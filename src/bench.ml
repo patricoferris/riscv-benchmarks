@@ -57,7 +57,7 @@ let print_and_execute exec prefix =
 let print_header exec = 
     let head = expand exec in 
     let header = surround head 50 in 
-      print_endline header
+      header
 
 let run () = 
   let executables = change_filetype ".out" benchmarks in
@@ -68,7 +68,7 @@ let spike ?args:(args="") () =
   let spike_instructions = List.map (fun exec -> "spike $pk " ^ args ^ " ./" ^ exec) executables in 
     List.iter2 
       (fun exec -> fun sp -> 
-        let cmd = ("echo \'Running: " ^ exec ^ "\n\' >> results.txt && " ^ sp ^ " >> results.txt") in 
+        let cmd = ("echo \'" ^ print_header exec ^ "\' >> results.txt && " ^ sp ^ " >> results.txt && echo '\n'" ) in 
         print_endline cmd;
         ignore (Sys.command cmd)
       ) executables spike_instructions
