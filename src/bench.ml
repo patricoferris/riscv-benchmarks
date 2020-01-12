@@ -1,5 +1,5 @@
 let helpers =
-  ["utils.ml"]
+  ["utils.ml"; "riscv.ml"; "executioner.ml"]
 
 let benchmarks = 
   ["intfloatarray.ml"; "sorting.ml"; "someornone.ml"; "zerotypes.ml"]
@@ -110,6 +110,7 @@ let command =
                 | (None, Some args) -> build ~args ~verbose ~asm ()
                 | (Some compiler, None) -> build ~compiler ~verbose ~asm ()
                 | (Some compiler, Some args) -> build ~compiler ~args ~verbose ~asm () end
+            | Some "log" -> List.iter (fun x -> print_endline (Riscv.instr_to_string x)) (Executioner.parse_log "test.txt")
             | None | Some _ -> print_endline "Please provide either build, spike-build, run, spike or clean as mode"
     )
 
