@@ -1,5 +1,5 @@
 let helpers =
-  ["utils.ml"]
+  ["utils.ml"; "riscv.ml"; "executioner.ml"]
 
 let benchmarks = 
   ["intfloatarray.ml"; "sorting.ml"; "someornone.ml"; "zerotypes.ml"]
@@ -66,9 +66,9 @@ let run () =
   let executables = change_filetype ".out" benchmarks in
   List.iter (fun exec -> print_and_execute exec "./") executables
 
-let spike ?args:(args="") ?output:(output="results.txt") () = 
+let spike ?spikeargs:(spikeargs="") ?pkargs:(pkargs="") ?output:(output="results.txt") () = 
   let executables = change_filetype ".out" benchmarks in
-  let spike_instructions = List.map (fun exec -> "spike $pk " ^ args ^ " ./" ^ exec) executables in 
+  let spike_instructions = List.map (fun exec -> "spike" ^ spikeargs ^ "$pk " ^ pkargs ^ " ./" ^ exec) executables in 
     List.iter2 
       (fun exec -> fun sp -> 
         let cmd = ("echo \'" ^ print_header exec ^ "\' >> " ^ output ^ " && " ^ sp ^ " >> " ^ output ^ " && echo '\n'" ) in 
@@ -87,6 +87,7 @@ let command =
         and args     = flag "-args" (optional string) ~doc:"<argument-list> arguments to pass in"
         and verbose  = flag "-v" no_arg ~doc:" printing build commands etc."
         and spikearg = flag "-spike" (optional string) ~doc:"<argument-list> spike arguments"
+        and pkargs   = flag "-pk" (optional string) ~doc:"<argument-list> proxy kernel arguments"
         and asm      = flag "-asm" no_arg ~doc:" produces .s assembly files during the building phase"
         and output   = flag "-o" (optional string) ~doc:"filename where the results should be stored"
       in
@@ -95,11 +96,15 @@ let command =
             | Some "clean" -> clean ~verbose () 
             | Some "run"   -> run ()
             | Some "spike" ->
-              begin match (spikearg, output) with 
-                | (None, None)        -> spike ()
-                | (None, Some output) -> spike ~output ()
-                | (Some args, None)   -> spike ~args () 
-                | (Some args, Some output) -> spike ~args ~output () end
+              begin match (spikearg, pkargs, output) with 
+                | (None, None, None)        -> spike ()
+                | (None, None, Some output) -> spike ~output ()
+                | (None, Some pkargs, None) -> spike ~pkargs ()
+                | (None, Some pkargs, Some output) -> spike ~pkargs ~output ()
+                | (Some spikeargs, None, None)     -> spike ~spikeargs () 
+                | (Some spikeargs, None, Some output) -> spike ~spikeargs ~output () 
+                | (Some spikeargs, Some pkargs, None) -> spike ~pkargs ~spikeargs () 
+                | (Some spikeargs, Some pkargs, Some output) -> spike ~spikeargs ~pkargs ~output () end
             | Some "spike-build" -> 
               begin match (compiler, output) with 
                 | (Some compiler, Some output) -> build ~compiler ~args:"-ccopt -static" ~verbose:true ~asm:true ~outputc:true ~output ()
@@ -110,6 +115,9 @@ let command =
                 | (None, Some args) -> build ~args ~verbose ~asm ()
                 | (Some compiler, None) -> build ~compiler ~verbose ~asm ()
                 | (Some compiler, Some args) -> build ~compiler ~args ~verbose ~asm () end
+            | Some "log" -> let tbl = Executioner.main () in 
+              let print_kv k v = print_endline (k ^ ": " ^ (string_of_int v)) in 
+                Hashtbl.iter print_kv tbl 
             | None | Some _ -> print_endline "Please provide either build, spike-build, run, spike or clean as mode"
     )
 
