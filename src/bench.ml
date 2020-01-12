@@ -110,7 +110,10 @@ let command =
                 | (None, Some args) -> build ~args ~verbose ~asm ()
                 | (Some compiler, None) -> build ~compiler ~verbose ~asm ()
                 | (Some compiler, Some args) -> build ~compiler ~args ~verbose ~asm () end
-            | Some "log" -> List.iter (fun x -> print_endline (Riscv.instr_to_string x)) (Executioner.parse_log "test.txt")
+            | Some "log" -> 
+              let print_kv k v = print_endline (k ^ ": " ^ (string_of_int v)) in 
+              let instructions = Executioner.parse_log "test.txt" in 
+                Hashtbl.iter print_kv (Executioner.execution_freq instructions)
             | None | Some _ -> print_endline "Please provide either build, spike-build, run, spike or clean as mode"
     )
 

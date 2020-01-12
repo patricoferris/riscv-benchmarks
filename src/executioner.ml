@@ -10,4 +10,14 @@ let open_file filename =
 
 let parse_log log_file = 
   let lines = open_file log_file in 
-  List.map (fun line -> Riscv.line_parse line) lines
+  Utils.map (fun line -> Riscv.line_parse line) lines
+
+let execution_freq log = 
+  let freq_tbl = Hashtbl.create 30 in 
+  let rec loop = function 
+    | []    -> freq_tbl
+    | i::is -> 
+      let instr = Riscv.instr_to_string i in 
+      try let f = (Hashtbl.find freq_tbl instr) in
+        Hashtbl.add freq_tbl instr (f + 1); loop is
+      with Not_found -> Hashtbl.add freq_tbl instr 1; loop is in loop log
