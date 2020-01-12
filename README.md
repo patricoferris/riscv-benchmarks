@@ -21,11 +21,16 @@ Below is the output of `dune exec -- ./bench.exe -help`
 
 === flags ===
 
-  [-args <argument-list>]  arguments to pass in
-  [-asm]                   produces .s assembly files during the building phase
-  [-c <compiler>]          ocamlopt to use
-  [-v]                     printing build commands etc.
-  [-build-info]            print info about this build and exit
-  [-version]               print the version of this build and exit
-  [-help]                  print this help text and exit
+  [-args <argument-list>]   arguments to pass in
+  [-asm]                    produces .s assembly files during the building phase
+  [-c <compiler>]           ocamlopt to use
+  [-log]                    <csv|print>
+  [-o filename]             where the results should be stored
+  [-pk <argument-list>]     proxy kernel arguments
+  [-spike <argument-list>]  spike arguments
+  [-v]                      printing build commands etc.
+  [-build-info]             print info about this build and exit
+  [-version]                print the version of this build and exit
+  [-help]                   print this help text and exit
+                            (alias: -?)
 ```
