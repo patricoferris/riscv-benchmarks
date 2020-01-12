@@ -22,12 +22,23 @@ let execution_freq freq_tbl log =
         Hashtbl.replace freq_tbl instr (f + 1); loop is
       with Not_found -> Hashtbl.add freq_tbl instr 1; loop is in loop log
 
+(********** CSV Output ***********)
+let print_csv oc k v =
+  Printf.fprintf oc "%s,%i\n" k v
+
+let to_csv filename tbl = 
+  let oc = open_out filename in 
+  let print = print_csv oc in
+    Printf.fprintf oc "%s,%s\n" "instruction" "frequency";
+    Hashtbl.iter print tbl; 
+  close_out oc
+
 (* Files are too big for memory - read in chuncks *)
-let main () =
+let main chunks () =
   let ic = open_file "test.txt" in
-  let freq_tbl = Hashtbl.create 30 in 
+  let freq_tbl = Hashtbl.create 50 in 
   let rec loop in_c = 
-    let (log, nin_c, closed) = parse_log in_c 100 in
-        if closed then freq_tbl else 
+    let (log, nin_c, closed) = parse_log in_c chunks in
+        if closed then (execution_freq freq_tbl log; freq_tbl) else 
         (execution_freq freq_tbl log; loop nin_c) 
   in loop ic
