@@ -6,8 +6,10 @@ type s_type = [`SW | `SH |`SD | `LB | `LW | `LD | `LBU | `LHU]
 type b_type = [`BEQ | `BNE | `BLT | `BGE | `BLTU | `BGEU]
 type u_type = [`LUI]
 type j_type = [`JAL | `JALR]
-type pseudo = [`SEXT_W | `MISC of string]
 
+type pure_instr = [r_type | i_type | s_type | b_type | u_type | j_type]
+
+type pseudo = [`SEXT_W | `MISC of string | `COMP of pure_instr]
 type insruction = [r_type | i_type | s_type | b_type | u_type | j_type | pseudo]
 
 type reg = string 
@@ -19,7 +21,7 @@ type i_type_instr = i_type * reg * reg * imm
 type s_type_instr = s_type * reg * offset * reg
 type b_type_instr = b_type * reg
 
-let instr_to_string = function
+let rec instr_to_string = function
   | `ADD  -> "add"
   | `LB   -> "lb"
   | `ADDI -> "addi"
@@ -54,9 +56,10 @@ let instr_to_string = function
   | `BLT  -> "blt"
   | `SW   -> "sw"
   | `SLT  -> "slt"
+  | `COMP instr -> "c." ^ (instr_to_string instr)
   | `MISC s -> s 
 
-let string_to_instr = function
+let rec string_to_instr = function
   | "add"  -> `ADD  
   | "lb"   -> `LB     
   | "addi" -> `ADDI 
@@ -91,7 +94,10 @@ let string_to_instr = function
   | "blt"  -> `BLT  
   | "sw"   -> `SW    
   | "slt"  -> `SLT
-  | s      ->  `MISC s
+  | s      ->  
+    let arr = Array.of_list (String.split_on_char '.' s) in 
+      if Array.length arr = 2 then `COMP (string_to_instr arr.(1))
+      else `MISC s
 
 (* Parsing a line of the log *)
 
