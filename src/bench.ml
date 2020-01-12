@@ -1,5 +1,5 @@
 let helpers =
-  ["utils.ml"; "riscv.ml"; "executioner.ml"]
+  ["utils.ml"; "riscv.ml"; "logger.ml"]
 
 let benchmarks = 
   ["intfloatarray.ml"; "sorting.ml"; "someornone.ml"; "zerotypes.ml"]
@@ -89,6 +89,7 @@ let command =
         and spikearg = flag "-spike" (optional string) ~doc:"<argument-list> spike arguments"
         and pkargs   = flag "-pk" (optional string) ~doc:"<argument-list> proxy kernel arguments"
         and asm      = flag "-asm" no_arg ~doc:" produces .s assembly files during the building phase"
+        and log      = flag "-log" (optional string) ~doc:"<csv|print>"
         and output   = flag "-o" (optional string) ~doc:"filename where the results should be stored"
       in
         fun () -> 
@@ -115,10 +116,12 @@ let command =
                 | (None, Some args) -> build ~args ~verbose ~asm ()
                 | (Some compiler, None) -> build ~compiler ~verbose ~asm ()
                 | (Some compiler, Some args) -> build ~compiler ~args ~verbose ~asm () end
-            | Some "log" -> let tbl = Executioner.main () in 
-              let print_kv k v = print_endline (k ^ ": " ^ (string_of_int v)) in 
-                Hashtbl.iter print_kv tbl 
-            | None | Some _ -> print_endline "Please provide either build, spike-build, run, spike or clean as mode"
+            | Some "log" -> let tbl = Logger.main 100 () in 
+              begin match log with 
+                | Some "print"  -> let print_kv k v = print_endline (k ^ ": " ^ (string_of_int v)) in Hashtbl.iter print_kv tbl
+                | Some "csv"    -> Logger.to_csv "log.csv" tbl 
+                | Some _ | None -> print_endline "Invalid argument" end 
+            | None | Some _ -> print_endline "Please provide either build, spike-build, run, spike, log or clean as mode"
     )
 
 let () = Core.Command.run command 
