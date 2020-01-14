@@ -68,7 +68,7 @@ let run () =
 
 let spike ?spikeargs:(spikeargs="") ?pkargs:(pkargs="") ?output:(output="results.txt") () = 
   let executables = change_filetype ".out" benchmarks in
-  let spike_instructions = List.map (fun exec -> "spike" ^ spikeargs ^ "$pk " ^ pkargs ^ " ./" ^ exec) executables in 
+  let spike_instructions = List.map (fun exec -> "spike " ^ spikeargs ^ " $pk " ^ pkargs ^ " ./" ^ exec) executables in 
     List.iter2 
       (fun exec -> fun sp -> 
         let cmd = ("echo \'" ^ print_header exec ^ "\' >> " ^ output ^ " && " ^ sp ^ " >> " ^ output ^ " && echo '\n'" ) in 
