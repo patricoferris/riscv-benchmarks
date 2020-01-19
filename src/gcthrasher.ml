@@ -35,4 +35,4 @@ let benchmark () =
     loop map iteration
 
 let () =
-  benchmark () |> ignore; Gc.print_stat stdout
+  benchmark () |> ignore
