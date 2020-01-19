@@ -2,7 +2,7 @@ let helpers =
   ["utils.ml"; "riscv.ml"]
 
 let benchmarks = 
-        ["intfloatarray.ml"; "sorting.ml"; "someornone.ml"; "zerotypes.ml"; "logger.ml"]
+        ["intfloatarray.ml"; "sorting.ml"; "someornone.ml"; "zerotypes.ml"; "logger.ml"; "gcthrasher.ml"]
 
 (* Printing *)
 let echo str file =
