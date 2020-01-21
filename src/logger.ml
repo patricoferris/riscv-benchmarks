@@ -9,7 +9,6 @@ let read_file ic chunk =
       lines ic (line::acc) (n - 1)
   with End_of_file -> close_in ic; (List.rev acc, ic, true) in lines ic [] chunk  
 
-
 let stream_line ic = 
   Stream.from 
     (fun _ -> try Some (input_line ic) with End_of_file -> None)
@@ -39,6 +38,11 @@ let execution_freq freq_tbl log =
 (********** CSV Output ***********)
 let print_csv oc k v =
   Printf.fprintf oc "%s,%i\n" k v
+
+let print_sorted tbl = 
+  let key_values = List.sort (fun (_, v1) (_, v2) -> -Pervasives.compare v1 v2) (List.of_seq (Hashtbl.to_seq tbl)) in 
+  let print_kv (k, v) = print_endline (k ^ ": " ^ (string_of_int v)) in 
+    List.iter print_kv key_values
 
 let to_csv filename tbl = 
   let oc = open_out filename in 
