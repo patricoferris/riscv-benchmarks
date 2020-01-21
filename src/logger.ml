@@ -24,7 +24,7 @@ let exec_freq_instr freq_tbl instr =
   let instr = Riscv.instr_to_string instr in 
       try let f = (Hashtbl.find freq_tbl instr) in
         Hashtbl.replace freq_tbl instr (f + 1)
-      with Not_found -> print_endline ("adding first time " ^ instr); Hashtbl.add freq_tbl instr 1
+      with Not_found -> Hashtbl.add freq_tbl instr 1
   
 let execution_freq freq_tbl log = 
   let rec loop = function 
