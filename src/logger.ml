@@ -42,7 +42,7 @@ let print_csv oc k v =
 let print_sorted tbl = 
   let key_values = List.sort (fun (_, v1) (_, v2) -> -Pervasives.compare v1 v2) (List.of_seq (Hashtbl.to_seq tbl)) in 
   let print_kv (k, v) = print_endline (k ^ ": " ^ (string_of_int v)) in 
-    List.iter print_kv key_values
+    List.iter print_kv key_values; print_endline ("Total Number of Instructions: " ^ string_of_int ((List.fold_left (fun acc (_k, v) -> acc + v) 0 key_values) - (Hashtbl.find tbl "no_match")))
 
 let to_csv filename tbl = 
   let oc = open_out filename in 

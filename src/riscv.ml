@@ -9,7 +9,7 @@ type j_type = [`JAL | `JALR]
 
 type pure_instr = [r_type | i_type | s_type | b_type | u_type | j_type]
 
-type pseudo = [`SEXT_W | `MISC of string | `COMP of pure_instr]
+type pseudo = [`SEXT_W | `MISC of string | `COMP of pure_instr | `NOMATCH]
 type insruction = [r_type | i_type | s_type | b_type | u_type | j_type | pseudo]
 
 type reg = string 
@@ -57,6 +57,7 @@ let rec instr_to_string = function
   | `SW   -> "sw"
   | `SLT  -> "slt"
   | `COMP instr -> "c." ^ (instr_to_string instr)
+  | `NOMATCH -> "no_match"
   | `MISC s -> s 
 
 let rec string_to_instr = function
@@ -94,6 +95,7 @@ let rec string_to_instr = function
   | "blt"  -> `BLT  
   | "sw"   -> `SW    
   | "slt"  -> `SLT
+  | "no_match" -> `NOMATCH
   | s      ->  
     let arr = Array.of_list (String.split_on_char '.' s) in 
       if Array.length arr = 2 then `COMP (string_to_instr arr.(1))
@@ -106,5 +108,5 @@ let line_parse line =
   if Array.length arr >= 7 then 
     (string_to_instr arr.(6))
   else 
-    `MISC "" 
+    `NOMATCH 
     
