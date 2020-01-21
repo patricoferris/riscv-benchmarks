@@ -9,17 +9,24 @@ let read_file ic chunk =
       lines ic (line::acc) (n - 1)
   with End_of_file -> close_in ic; (List.rev acc, ic, true) in lines ic [] chunk  
 
-let read_lines f ic =
-  let rec loop () =
-    try f(input_line ic); loop()
-    with End_of_file -> ()
-  in
-  loop()
+
+let stream_line ic = 
+  Stream.from 
+    (fun _ -> try Some (input_line ic) with End_of_file -> None)
+
+let read_stream f ic = 
+  Stream.iter (fun line -> f line) (stream_line ic)
 
 let parse_log ic chunk = 
   let (lines, nic, closed) = read_file ic chunk in 
     (Utils.map (fun line -> Riscv.line_parse line) lines, nic, closed)
 
+let exec_freq_instr freq_tbl instr = 
+  let instr = Riscv.instr_to_string instr in 
+      try let f = (Hashtbl.find freq_tbl instr) in
+        Hashtbl.replace freq_tbl instr (f + 1)
+      with Not_found -> print_endline ("adding first time " ^ instr); Hashtbl.add freq_tbl instr 1
+  
 let execution_freq freq_tbl log = 
   let rec loop = function 
     | []    -> ()
@@ -43,6 +50,6 @@ let to_csv filename tbl =
 (* Files are too big for memory - read in chuncks *)
 let main _from_stdin () =
   let freq_tbl = Hashtbl.create 50 in
-  let add_to_table s = execution_freq freq_tbl [Riscv.line_parse s] in 
-  read_lines (add_to_table) stdin;
-  freq_tbl
+  let add_to_table s = exec_freq_instr freq_tbl (Riscv.line_parse s) in 
+  let _s = read_stream (add_to_table) stdin in 
+    freq_tbl
