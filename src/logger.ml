@@ -1,13 +1,20 @@
 (* Takes an execution log and makes sense of it *)
 let open_file filename =
-  open_in filename 
+  open_in filename     
 
 let read_file ic chunk = 
   let rec lines ic acc = function 
     | 0 -> (List.rev acc, ic, false)
     | n -> try let line = input_line ic in  
       lines ic (line::acc) (n - 1)
-  with End_of_file -> close_in ic; (List.rev acc, ic, true) in lines ic [] chunk       
+  with End_of_file -> close_in ic; (List.rev acc, ic, true) in lines ic [] chunk  
+
+let read_lines f ic =
+  let rec loop () =
+    try f(input_line ic); loop()
+    with End_of_file -> ()
+  in
+  loop()
 
 let parse_log ic chunk = 
   let (lines, nic, closed) = read_file ic chunk in 
@@ -34,11 +41,8 @@ let to_csv filename tbl =
   close_out oc
 
 (* Files are too big for memory - read in chuncks *)
-let main chunks () =
-  let ic = open_file "test.txt" in
-  let freq_tbl = Hashtbl.create 50 in 
-  let rec loop in_c = 
-    let (log, nin_c, closed) = parse_log in_c chunks in
-        if closed then (execution_freq freq_tbl log; freq_tbl) else 
-        (execution_freq freq_tbl log; loop nin_c) 
-  in loop ic
+let main _from_stdin () =
+  let freq_tbl = Hashtbl.create 50 in
+  let add_to_table s = execution_freq freq_tbl [Riscv.line_parse s] in 
+  read_lines (add_to_table) stdin;
+  freq_tbl

@@ -116,12 +116,12 @@ let command =
                 | (None, Some args) -> build ~args ~verbose ~asm ()
                 | (Some compiler, None) -> build ~compiler ~verbose ~asm ()
                 | (Some compiler, Some args) -> build ~compiler ~args ~verbose ~asm () end
-            | Some "log" -> let tbl = Logger.main 1000 () in 
+            | Some "log" -> let tbl = Logger.main true () in 
               begin match log with 
-                | Some "print"  -> let print_kv k v = print_endline (k ^ ": " ^ (string_of_int v)) in Hashtbl.iter print_kv tbl
-                | Some str      -> let file = String.split_on_char '.' str in 
+                | None     -> let print_kv k v = print_endline (k ^ ": " ^ (string_of_int v)) in Hashtbl.iter print_kv tbl
+                | Some str -> let file = String.split_on_char '.' str in 
                     if List.tl file = ["csv"] then Logger.to_csv str tbl else print_endline "Please provide a valid csv filename"
-                | None -> print_endline "Invalid argument" end 
+                end 
             | None | Some _ -> print_endline "Please provide either build, spike-build, run, spike, log or clean as mode"
     )
 
