@@ -1,8 +1,8 @@
 let helpers =
-  ["utils.ml"; "riscv.ml"]
+  ["utils.ml"; "riscv.ml"; "logger.ml"]
 
 let benchmarks = 
-        ["intfloatarray.ml"; "sorting.ml"; "someornone.ml"; "zerotypes.ml"; "logger.ml"; "gcthrasher.ml"]
+        ["intfloatarray.ml"; "sorting.ml"; "someornone.ml"; "zerotypes.ml"; "gcthrasher.ml"]
 
 (* Printing *)
 let echo str file =
@@ -58,6 +58,7 @@ let build ?compiler:(compiler="ocamlopt") ?args:(args="") ?verbose:(verbose=fals
         if verbose then (print_endline command; ignore (Sys.command command)) else ignore (Sys.command command)
       ) (change_filetype ".cmx" benchmarks); if outputc then echo (print_header compiler) output
 
+(* Removes generated files after compiling benchmarks *)
 let clean ?verbose:(verbose=false) () =
   let command = "rm *.cmi *.cmx *.o *.out *.s *.txt" in 
   if verbose then (print_endline command; ignore (Sys.command command)) else ignore (Sys.command command)
@@ -72,7 +73,7 @@ let spike ?spikeargs:(spikeargs="") ?pkargs:(pkargs="") ?output:(output="results
     List.iter2 
       (fun exec -> fun sp -> 
         let cmd = ("echo \'" ^ print_header exec ^ "\' >> " ^ output ^ " && " ^ sp ^ " >> " ^ output ^ " && echo '\n'" ) in 
-        print_endline cmd;
+        print_endline (print_header exec);
         ignore (Sys.command cmd)
       ) executables spike_instructions
 

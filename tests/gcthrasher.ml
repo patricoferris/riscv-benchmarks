@@ -11,7 +11,6 @@ end
 
 module SizedStringMap = SizedMap (Map.Make(String))
 
-(* let gc_config () = *)
 let iteration = 1_000_000
 let max_size = 100_000 
 let generate_string n = String.make 512 (char_of_int (n mod 256))

@@ -1,0 +1,3 @@
+(executable
+ (name sorting zerotypes gcthrasher intfloatarray someornone)
+ (libraries ctypes))
