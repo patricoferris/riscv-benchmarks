@@ -19,3 +19,4 @@ uintnat rd_cycles(value unit)
   return cycles;
 }
 #endif
+

@@ -8,4 +8,4 @@ let stdlib_sort () =
 
 let main () = stdlib_sort ()
 
-let () = print_int (Utils.rd_cycles ()); main ()
+let () = print_endline ("Cycles: " ^ (string_of_int (Utils.count_cycles main)))

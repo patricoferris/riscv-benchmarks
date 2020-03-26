@@ -18,6 +18,8 @@ val gen_random_float_list : int -> float -> float -> float list
 val gen_random_array : int -> 'a -> 'b -> ('a -> 'b -> 'c) -> 'c array
 (** Random array generator - the function generates the random numbers *)
 
+val count_cycles : (unit -> unit) -> int  
+
 external rd_cycles : unit -> int = "rd_cycles"
 (** An OCaml wrapper for calling rd_cycle assembly *)
 
