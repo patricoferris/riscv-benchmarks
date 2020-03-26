@@ -41,4 +41,6 @@ let gen_random_float_list size a b =
 let gen_random_array size a b f =
   Array.map (fun _ -> f a b) (Array.make size 0)
 
- 
+(* Calling rdcycles for number of cycles *)
+external rd_cycles : unit -> int = "rd_cycles"
+

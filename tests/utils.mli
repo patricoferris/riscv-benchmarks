@@ -12,21 +12,13 @@ val random_float_between : float -> float -> float
 val gen_random_int_list : int -> int -> int -> int list 
 (** Random list generation with size, min and max arguments *)
 
-
 val gen_random_float_list : int -> float -> float -> float list 
 (** Random list generation with size, min and max arguments *)
 
-let gen_random_float_list size a b =
-  let rec aux acc a b = function 
-    | 0 -> acc
-    | n -> aux ((random_float_between a b)::acc) a b (n - 1) 
-  in 
-    aux [] a b size 
+val gen_random_array : int -> 'a -> 'b -> ('a -> 'b -> 'c) -> 'c array
+(** Random array generator - the function generates the random numbers *)
 
-let gen_random_array size a b f =
-  Array.map (fun _ -> f a b) (Array.make size 0)
-
-(* Calling rdcycles for number of cycles *)
-let rd_cycles  
+external rd_cycles : unit -> int = "rd_cycles"
+(** An OCaml wrapper for calling rd_cycle assembly *)
 
  
