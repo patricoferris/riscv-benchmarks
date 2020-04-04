@@ -2,5 +2,5 @@
 /src/*.cmx
 /src/*.o
 
-/_build
+*_build
 .merlin
