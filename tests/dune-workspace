@@ -1,4 +1,9 @@
 (lang dune 2.4)
-(context (default (targets riscv)))
+(context 
+  (opam 
+    (switch 4.08.0+musl+static+flambda) (targets native)))
+(context   
+  (opam 
+    (switch cross) (targets riscv)))
 (env 
   (_ (ocamlopt_flags (:standard -ccopt -static))))
