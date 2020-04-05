@@ -1,4 +1,5 @@
 (executable
+    (promote (until-clean) (into ../../out))
     (name capi)
     (modules capi)
     (libraries ocamlcapi))
