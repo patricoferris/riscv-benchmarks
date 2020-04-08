@@ -1,0 +1,6 @@
+(executables
+  (names sorting zerotypes intfloatarray gc someornone)
+  (ocamlopt_flags (:standard -ccopt -static))
+  (promote (until-clean) (into ../out))
+  (foreign_stubs (language c) (names rd_cycles))) 
+

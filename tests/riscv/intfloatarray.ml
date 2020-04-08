@@ -60,7 +60,6 @@ let float_list () =
   let gt_list = Utils.map2 greater_than random_float_list_one random_float_list_two in 
     gt_list
 
-(* BENCHMARK DRIVER *)
 let benchmark () = 
   ignore (int_list ()) ; ignore (float_list ()) ; ignore (mixed_types ())
 

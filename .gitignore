@@ -1,5 +1,6 @@
 /src/*.cmi
 /src/*.cmx
 /src/*.o
-
-/_build
+/tests/out*
+*_build
+.merlin
