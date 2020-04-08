@@ -1,7 +1,9 @@
 #! /bin/bash
 
+dir="./tests/out/riscv/"
+
 range() {
-  name="./tests/out/" 
+  name=$dir
   name+=$(basename $1 .exe)
   name+=".dump"
   # Get object dump of file
@@ -12,7 +14,7 @@ range() {
 
 # Run spike and dump opsikes analysis into file.log 
 spike_ospike () {
-  name="./tests/out/"
+  name=$dir
   name+=$(basename $1 .exe)
   name+=".log"
   echo $2
@@ -20,5 +22,5 @@ spike_ospike () {
   spike -l $pk $1 2>&1 | ospike stdin -o $name -lower 0 -upper 0x$2 
 }
 
-for i in ./tests/out/*.exe; do highest=$(range $i); spike_ospike "$i" "$highest"; done 
+for i in $dir*.exe; do highest=$(range $i); spike_ospike "$i" "$highest"; done 
 
