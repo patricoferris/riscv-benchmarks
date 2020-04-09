@@ -1,5 +1,5 @@
 let size = 8192
-
+let () = Random.init 42
 let is_none = function 
   | None   -> true
   | Some _ -> false

@@ -7,13 +7,11 @@
 (include finalise-dune.inc)
 
 (executables
-  (promote (until-clean) (into ../../out))
   (names alloc) (modules alloc))
 
 (executables
- (promote (until-clean) (into ../../out))
  (names alloc_multicore) (modules alloc_multicore))
 
-(executables (promote (until-clean) (into ../../out)) (names morestacks) (modules morestacks))
+(executables (names morestacks) (modules morestacks))
 
 (alias (name buildbench) (deps alloc.exe morestacks.exe))

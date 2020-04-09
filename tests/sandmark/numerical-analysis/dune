@@ -1,16 +1,16 @@
 ;; Adapted from OCamlPro's ocamlbench-repo
 ;; See https://github.com/OCamlPro/ocamlbench-repo
-(executable (promote (until-clean) (into ../../out)) (name durand_kerner_aberth) (modules durand_kerner_aberth))
-(executable (promote (until-clean) (into ../../out)) (name fft) (modules fft))
-(executable (promote (until-clean) (into ../../out)) (name lu_decomposition) (modules lu_decomposition))
-(executable (promote (until-clean) (into ../../out)) (name qr_decomposition) (modules qr_decomposition))
+(executable  (name durand_kerner_aberth) (modules durand_kerner_aberth))
+(executable  (name fft) (modules fft))
+(executable  (name lu_decomposition) (modules lu_decomposition))
+(executable  (name qr_decomposition) (modules qr_decomposition))
 
 (executable
- (promote (until-clean) (into ../../out))
+ 
  (name levinson_durbin)
  (modules levinson_durbin levinson_durbin_dataset))
 (executable
- (promote (until-clean) (into ../../out))
+ 
  (name naive_multilayer)
  (modules naive_multilayer naive_multilayer_dataset))
 

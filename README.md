@@ -1,36 +1,7 @@
 # RISC-V Benchmarks
 -------------------
 
-A tool for compiling a series of RISC-V OCaml cross-compiling benchmarks. You will need `dune` to build everything. 
+This repository contains some tests for analysing the OCaml compiler for the RISC-V target architecture. The `tests/riscv` folder contains custom
+test cases for particular extensions to the compiler whilst the `tests/sandmark` folder contains some of the more straightforward tests taken from the [sandmark](https://github.com/ocaml-bench/sandmark). 
 
-Here is an example usage: 
-
-```
-git clone https://github.com/patricoferris/riscv-benchmarks.git
-cd riscv-benchmarks/src 
-
-dune exec -- ./bench.exe build -c <which ever compiler> -args "arg1 arg2" -v
-```
-
-Below is the output of `dune exec -- ./bench.exe -help`
-
-```
-🐫  RISC-V Benchmark Tool: a CLI for easier compilation 🐫
-
-  bench.exe [MODE]
-
-=== flags ===
-
-  [-args <argument-list>]   arguments to pass in
-  [-asm]                    produces .s assembly files during the building phase
-  [-c <compiler>]           ocamlopt to use
-  [-log]                    <csv|print>
-  [-o filename]             where the results should be stored
-  [-pk <argument-list>]     proxy kernel arguments
-  [-spike <argument-list>]  spike arguments
-  [-v]                      printing build commands etc.
-  [-build-info]             print info about this build and exit
-  [-version]                print the version of this build and exit
-  [-help]                   print this help text and exit
-                            (alias: -?)
-```
+The tests are meant to be run in conjunction with [this]() Dockerfile - the point being it creates two opam switches for the original cross-compiler (4.07.0) and the customised version, which are then both statically built using `dune`. The `ospike.sh` script then runs the tests using the Spike simulator piping the log through the `ospike` tool which can be customised by changing the shell script. 

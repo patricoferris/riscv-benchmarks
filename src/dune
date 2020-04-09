@@ -1,4 +1,0 @@
-(executable
-  (name       bench)
-  (libraries  core)
-  (preprocess (pps ppx_jane)))

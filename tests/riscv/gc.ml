@@ -1,5 +1,5 @@
 (* Allocating and Finalising all over the place *)
-
+let () = Random.init 42
 (* A Functor for Maps that track their size *)
 module SizedMap (M: Map.S) = struct 
   type 'a t = { size: int; map: 'a M.t }

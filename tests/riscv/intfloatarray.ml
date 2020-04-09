@@ -6,7 +6,7 @@
   using the Is_long macro which has been swapped for inline-asm 
   to the caml_is_int custom instruction 
 *)
-
+let () = Random.init 42
 (* Set size *)
 let size =
     if Array.length Sys.argv = 1
