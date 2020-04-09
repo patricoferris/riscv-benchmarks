@@ -2,5 +2,8 @@
 (context   
   (opam 
     (switch cross) (targets riscv)))
+(context   
+  (opam 
+    (switch cross-original) (targets riscv)))
 (env 
   (_ (ocamlopt_flags (:standard -ccopt -static))))
