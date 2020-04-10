@@ -1,6 +1,6 @@
 #! /bin/bash
 
-dir="./tests/out/riscv/"
+dir="./tests/_build/cross.riscv/riscv/"
 
 range() {
   name=$dir
