@@ -1,4 +1,4 @@
-let size = 10000
+let size = 1000
 let () = Random.init 42
 let stdlib_sort () =
   let int_list = Utils.gen_random_int_list size 0 1000 in 
@@ -8,4 +8,4 @@ let stdlib_sort () =
 
 let main () = stdlib_sort ()
 
-let () = print_endline ("Cycles: " ^ (string_of_int (Utils.count_cycles main)))
+let () = main ()
