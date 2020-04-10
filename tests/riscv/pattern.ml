@@ -17,9 +17,9 @@ let simple_to_string = function
   | E -> "Type simple: E"
 
 let complex_to_string = function 
-  | CA i -> print_int i 
-  | CB f -> print_float f 
-  | CC s -> print_string s 
+  | CA i -> string_of_int i 
+  | CB f -> string_of_float f 
+  | CC s -> s 
 
 let int_to_simple = function 
   | n when n mod 5 = 0 -> A 
