@@ -16,6 +16,13 @@ let simple_to_string = function
   | D -> "Type simple: D"
   | E -> "Type simple: E"
 
+let print_simple = function 
+  | A -> print_endline "Type simple: A"
+  | B -> print_endline "Type simple: B"
+  | C -> print_endline "Type simple: C"
+  | D -> print_endline "Type simple: D"
+  | E -> print_endline "Type simple: E"
+
 let complex_to_string = function 
   | CA i -> string_of_int i 
   | CB f -> string_of_float f 
@@ -37,6 +44,6 @@ let int_to_complex = function
 
 let () = 
   let simple_lst = List.init size int_to_simple in 
-  let _string_simple = Utils.map simple_to_string simple_lst in 
+  let _string_simple = List.iter print_simple simple_lst; Utils.map simple_to_string simple_lst in 
   let complex_lst = List.init size int_to_complex in 
   let _string_complex = Utils.map complex_to_string complex_lst in ()
