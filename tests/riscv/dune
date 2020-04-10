@@ -1,5 +1,5 @@
 (executables
-  (names sorting zerotypes intfloatarray gc someornone)
+  (names sorting zerotypes intfloatarray gc someornone pattern)
   (ocamlopt_flags (:standard -ccopt -static))
   (foreign_stubs (language c) (names rd_cycles))) 
 
