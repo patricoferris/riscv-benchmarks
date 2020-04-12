@@ -60,14 +60,14 @@ let int_to_simple = function
 let int_to_nonconst = function 
   | n when n mod 4 = 0 -> CA n 
   | n when n mod 4 = 1 -> CB (float_of_int n) 
-  | n when n mod 4 = 2 -> CC (string_of_int n)s
+  | n when n mod 4 = 2 -> CC (string_of_int n)
   | n when n mod 4 = 3 -> CD true
   | n -> CA n (* Should never be reached *)
 
 let int_to_poly = function 
   | n when n mod 4 = 0 -> `Int n
   | n when n mod 4 = 1 -> `String (string_of_int n) 
-  | n when n mod 4 = 2 -> `Float (string_of_float n)
+  | n when n mod 4 = 2 -> `Float (float_of_int n)
   | n when n mod 4 = 3 -> `Bool true
   | n -> `Int n (* Should never be reached *)
 
@@ -77,4 +77,4 @@ let () =
   let nonconst_lst = List.init size int_to_nonconst in 
   let _string_nonconst = List.iter print_nonconst nonconst_lst; Utils.map nonconst_to_string nonconst_lst in 
   let poly_lst = List.init size int_to_poly in 
-  let _string_poly = List.iter print_poly poly_to_string; Utils.map poly_to_string poly_lst in () 
+  let _string_poly = List.iter print_poly poly_lst; Utils.map poly_to_string poly_lst in () 
