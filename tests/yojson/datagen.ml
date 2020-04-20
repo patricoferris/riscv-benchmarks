@@ -1,11 +1,10 @@
 
 module WeatherData = struct 
-  open Yojson.Basic
   type t = {
     temp_min : float;
     temp_max : float; 
   } 
-  let to_json {temp_min, temp_max} = `Assoc [("temp_min", `Float temp_min); ("temp_max", `Float temp_max)]
+  let to_json {temp_min; temp_max} = `Assoc [("temp_min", `Float temp_min); ("temp_max", `Float temp_max)]
   let to_string t = Printf.sprintf "(min %f, max %f)" t.temp_min t.temp_max
 end 
 
@@ -23,7 +22,6 @@ let temp_gen t mean =
 
 (* Converts a station_record to json *)
 let to_json {station_id; date; data} = 
-  let open Yojson.Basic in 
     `Assoc
       [("station_id",`String station_id); 
        ("date", `Int date);
@@ -37,4 +35,4 @@ let make size =
     let temp_min = t -. (Random.float 1.) in 
     let temp_max = t +. (Random.float 1.) in 
     let station_id = "S1" in {station_id; date = i; data = {temp_min; temp_max}} in 
-  List.init random_event size 
+  List.init size random_event 
