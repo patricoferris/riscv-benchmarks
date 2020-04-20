@@ -1,0 +1,1 @@
+let () = Yojson.Basic.(pretty_print Format.std_formatter (from_string "{\"hello\": \"world\"}"))
