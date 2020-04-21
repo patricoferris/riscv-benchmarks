@@ -1,6 +1,6 @@
 module Y = Yojson.Basic
 
-let data = Datagen.make 1_000 
+let data = Datagen.make 100 
 
 (* Calculating moving average over a list for a given window size *)
 let moving_average win lst = 
@@ -17,9 +17,13 @@ let moving_average win lst =
 let () = 
   (* Generating JSON *)
   let json  = `List (data |> List.map Datagen.to_json) in 
-  let _s = Y.to_string json in 
-  (* Parsing JSON and computing statistics *) 
-  let lst = Y.Util.to_list json in 
-  let data = List.map Datagen.of_json lst in 
+  (* Converting to pretty string *)
+  let s = Y.prettify @@ Y.to_string json in 
+  (* Parsing JSON from string to list *) 
+  let lst = Y.Util.to_list (Y.from_string s) in 
+  (* Convert JSON back to Datagen.t *)
+  let data = List.map Datagen.of_json lst in
+  (* Extract the temperatures from the readings as an average *) 
   let temps = List.map Datagen.average_temp data in 
+  (* Calculate the 10-hour moving average *)
   let _moving = moving_average 10 temps in ()
