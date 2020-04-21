@@ -1,6 +1,6 @@
 module Y = Yojson.Basic
 
-let data = Datagen.make 100 
+let data = Datagen.make 8585 
 
 (* Calculating moving average over a list for a given window size *)
 let moving_average win lst = 

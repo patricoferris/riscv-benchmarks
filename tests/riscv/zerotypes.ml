@@ -16,7 +16,7 @@ let is_none = function
 	| None   -> true 
 	| Some _ -> false 
 
-let size = 8000
+let size = 8585
 let () = Random.init 42
 let floats = Utils.gen_random_float_list size 0. 100.
 let nums =  Utils.gen_random_int_list size 0 100

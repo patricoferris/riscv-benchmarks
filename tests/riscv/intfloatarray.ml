@@ -10,7 +10,7 @@ let () = Random.init 42
 (* Set size *)
 let size =
     if Array.length Sys.argv = 1
-    then 1024 else int_of_string Sys.argv.(1)
+    then 8585 else int_of_string Sys.argv.(1)
 
 (* Numbers: can be integers or floats *)
 (* In OCaml, integers are not heap-allocated (tag bit 1) whereas floats are (boxed)*)
