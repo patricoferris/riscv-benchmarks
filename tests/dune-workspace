@@ -5,6 +5,12 @@
     (targets riscv)
     (env 
       (_ (ocamlopt_flags (:standard -riscv asjz -ccopt -static))))))
+(context
+  (opam
+    (switch cross-inline)
+    (targets riscv)
+    (env
+      (_ (ocamlopt_flags (:standard -riscv asjz -ccopt -static))))))
 (context   
   (opam 
     (switch cross-original) (targets riscv)))
