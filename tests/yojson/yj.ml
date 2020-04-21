@@ -17,7 +17,9 @@ let moving_average win lst =
 let () = 
   (* Generating JSON *)
   let json  = `List (data |> List.map Datagen.to_json) in 
+  let _s = Y.to_string json in 
   (* Parsing JSON and computing statistics *) 
-  let data = List.map Datagen.of_json (Y.Util.to_list json) in 
+  let lst = Y.Util.to_list json in 
+  let data = List.map Datagen.of_json lst in 
   let temps = List.map Datagen.average_temp data in 
   let _moving = moving_average 10 temps in ()

@@ -66,6 +66,7 @@ let of_json = function
     date = Y.Util.to_int @@ find "date" String.equal lst; 
     data = WeatherData.of_json @@ find "data" String.equal lst
   }
+  | _ -> raise (Failure "Expect assoc list")
 
 (* Int to state *)
 let int_to_state = function 
@@ -79,8 +80,8 @@ let int_to_state = function
 let make size = 
   let random_event i = 
     let t = temp_gen (float_of_int i) 10. in
-    let temp_min = int_of_float (t -. (Random.float 1.) *. 100.) in 
-    let temp_max = int_of_float (t +. (Random.float 1.) *. 100.) in
+    let temp_min = int_of_float ((t -. (Random.float 1.)) *. 100.) in 
+    let temp_max = int_of_float ((t +. (Random.float 1.)) *. 100.) in
     let state = Random.int 4 |> int_to_state in 
     let station_id = "S1" in {station_id; state; date = i; data = {temp_min; temp_max}} in 
   List.init size random_event 
