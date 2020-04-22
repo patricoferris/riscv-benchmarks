@@ -1,7 +1,8 @@
 #! /bin/bash
 
 dirr="./tests/_build/cross.riscv/riscv/"
-diro="./tests/_build/cross-original.riscv/riscv" 
+diri="./tests/_build/cross-inline.riscv/riscv/"
+diro="./tests/_build/cross-original.riscv/riscv/" 
 
 range() {
   name=$2
@@ -24,5 +25,6 @@ spike_ospike () {
 }
 
 for i in $dirr*.exe; do highest=$(range $i $dirr); spike_ospike "$i" "$highest" "$dirr"; done 
+for i in $diri*.exe; do highest=$(range $i $diri); spike_ospike "$i" "$highest" "$diri"; done
 for i in $diro*.exe; do highest=$(range $i $diro); spike_ospike "$i" "$highest" "$diro"; done 
 
