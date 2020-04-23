@@ -1,8 +1,9 @@
 #! /bin/bash
-
-dirr="./tests/_build/cross.riscv/riscv/"
-diri="./tests/_build/cross-inline.riscv/riscv/"
-diro="./tests/_build/cross-original.riscv/riscv/" 
+echo "What subfolder of the benchmarks do you want to run?" 
+read sub 
+dirr="./tests/_build/cross.riscv/"$sub
+diri="./tests/_build/cross-inline.riscv/"$sub
+diro="./tests/_build/cross-original.riscv/"$sub
 
 range() {
   name=$2
