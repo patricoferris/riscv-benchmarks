@@ -1,6 +1,8 @@
 module Y = Yojson.Basic
 
-let data = Datagen.make 8585 
+let data = 
+  let size = if Array.length Sys.argv > 1 then int_of_string Sys.argv.(1) else 8585 in 
+    Datagen.make size 
 
 (* Calculating moving average over a list for a given window size *)
 let moving_average win lst = 
